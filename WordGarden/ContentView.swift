@@ -10,13 +10,15 @@ import SwiftUI
 struct ContentView: View {
     @State private var wordsGuessed = 0
     @State private var wordsMissed = 0
-    @State private var wordsToGuess = ["SWIFT", "DOG", "CAT"] // All caps
     @State private var gameStatusMessage = "How Many Guesses to Uncover the Hidden Word?"
-    @State private var currentWord = 0
+    @State private var currentWordIndex = 0 // index in wordsToGuess
+    @State private var wordToGuess = ""
+    @State private var revealedWord = ""
     @State private var guessedLetter = ""
     @State private var imageName = "flower8"
     @State private var playAgainHidden = true
     @FocusState private var textFieldIsFocused: Bool
+    private let wordsToGuess = ["", "DOG", "CAT"] // All Caps
     
     var body: some View {
         VStack {
@@ -39,8 +41,8 @@ struct ContentView: View {
                 .multilineTextAlignment(.center)
                 .padding()
             
-            //TODO: Switch to wordsToGuess[currentWord]
-            Text("_ _ _ _ _")
+            //TODO: Switch to wordsToGuess[currentWordIndex]
+            Text(revealedWord)
                 .font(.title)
             
             if playAgainHidden {
@@ -90,6 +92,11 @@ struct ContentView: View {
                 .scaledToFit()
         }
         .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            wordToGuess = wordsToGuess[currentWordIndex]
+            // CREATE A STRING FROM A REPEATING VALUE
+            revealedWord = "_" + String(repeating: " _", count: wordToGuess.count-1)
+        }
     }
 }
 #Preview {
