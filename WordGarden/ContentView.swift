@@ -14,11 +14,12 @@ struct ContentView: View {
     @State private var currentWordIndex = 0 // index in wordsToGuess
     @State private var wordToGuess = ""
     @State private var revealedWord = ""
+    @State private var lettersGuessed = ""
     @State private var guessedLetter = ""
     @State private var imageName = "flower8"
     @State private var playAgainHidden = true
     @FocusState private var textFieldIsFocused: Bool
-    private let wordsToGuess = ["", "DOG", "CAT"] // All Caps
+    private let wordsToGuess = ["SWIFT", "DOG", "CAT"] // All Caps
     
     var body: some View {
         VStack {
@@ -67,10 +68,16 @@ struct ContentView: View {
                             guessedLetter = String(lastChar).uppercased()
                         }
                         .focused($textFieldIsFocused)
+                        .onSubmit {
+                            // As long as guessedLetter is not an empty String we can continue, otherwise don't do anything
+                            guard guessedLetter != "" else {
+                                return
+                            }
+                            guessALetter()
+                        }
                     
                     Button("Guess a Letter:") {
-                        //TODO: Guess a Letter Button Action Here
-                        textFieldIsFocused = false
+                        guessALetter()
                     }
                     .buttonStyle(.bordered)
                     .tint(.mint)
@@ -86,8 +93,8 @@ struct ContentView: View {
             }
             
             Spacer()
-        
-        Image(imageName)
+            
+            Image(imageName)
                 .resizable()
                 .scaledToFit()
         }
@@ -97,6 +104,15 @@ struct ContentView: View {
             // CREATE A STRING FROM A REPEATING VALUE
             revealedWord = "_" + String(repeating: " _", count: wordToGuess.count-1)
         }
+    }
+    
+    func guessALetter() {
+        textFieldIsFocused = false
+            lettersGuessed = lettersGuessed + guessedLetter
+            revealedWord = wordToGuess.map { letter in
+                lettersGuessed.contains(letter) ? "\(letter)" : "_ "
+            } .joined(separator: " ")
+            guessedLetter = ""
     }
 }
 #Preview {
